@@ -5,6 +5,7 @@ import styles from './TodoList.module.css';
 
 export default function TodoList({ filter }) {
     const [todos, setTodos] = useState(() => readTodosFromLocalStorage());
+    const [search, setSearch] = useState('');
     const handleAdd = (todo) => setTodos([...todos, todo]);
     const handleUpdate = (updated) => setTodos(todos.map((todo) => (todo.id === updated.id ? updated : todo)));
     const handleDelete = (deleted) => setTodos(todos.filter((todo) => (todo.id !== deleted.id)));
@@ -16,9 +17,12 @@ export default function TodoList({ filter }) {
     const filtered = getFilterChanger(todos, filter);
     return (
         <section className={styles.container}>
+            <input className={styles.search} type='text' placeholder='검색할 내용을 입력해 주세요.' value={search} onChange={(e) => setSearch(e.target.value)}/>
             <ul className={styles.list}>
                 {
-                    filtered.map((item) => (
+                    filtered
+                        .filter((item) => item.text.toLowerCase().includes(search.toLowerCase()))
+                        .map((item) => (
                         <Todo key={item.id} todo={item} onUpdate={handleUpdate} onDelete={handleDelete} />
                     ))
                 }
